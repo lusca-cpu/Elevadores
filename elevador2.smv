@@ -1,0 +1,43 @@
+MODULE main
+
+VAR
+	andares: 0 .. 2;
+	botoes: {c0, c1, c2}; --Botões internos no elevador
+	--Botões externos para chamar o elevador
+	bot_prim_andar: boolean; 
+	bot_seg_andar: boolean;
+	bot_ter_andar: boolean;
+	
+ASSIGN
+	init(andares):= 0;
+	init(botoes):= c0;
+	
+	next(andares):= case
+						(andares=0) & (botoes=c0) = TRUE: 0;
+						((andares=1) | (andares=2)) & (botoes=c0) = TRUE: 0;
+						
+						(andares=1) & (botoes=c1) = TRUE: 1;
+						((andares=0) | (andares=2)) & (botoes=c1) = TRUE: 1;
+
+						(andares=2) & (botoes=c2) = TRUE: 2;
+						((andares=0) | (andares=1)) & (botoes=c2) = TRUE: 2;
+						
+						((andares=0) | (andares=1) | (andares=2)) & (bot_prim_andar=TRUE) = TRUE: 0;
+						((andares=0) | (andares=1) | (andares=2)) & (bot_seg_andar=TRUE) = TRUE:1;
+						((andares=0) | (andares=1) | (andares=2)) & (bot_ter_andar=TRUE) = TRUE: 2;
+						
+						TRUE: andares;
+					esac;
+	
+--c)
+--1.	
+SPEC
+	AG(botoes=c0 -> AF andares=0)
+
+--2.
+SPEC
+	AG(botoes=c1 -> AF andares=1)
+
+--3.
+SPEC
+	AG(botoes=c2 -> AF andares=2)

@@ -1,0 +1,82 @@
+-- 3. Considere um elevador que atende 5 andares e que a porta só seja aberta quando ele estiver parado em um andar.
+
+MODULE main
+
+VAR 
+	andar: {Primeiro, Segundo, Terceiro, Quarto, Quinto};
+	botao: 1..5;
+	porta: boolean;  -- TRUE= aberta, FALSE= fechada 
+	
+ASSIGN
+	init(andar):= Primeiro;
+	init(botao):= 1;
+	init(porta):= TRUE;
+	
+	next(andar):= case
+					(andar = Primeiro) & (botao = 1) = TRUE: Primeiro;
+					(andar = Segundo) & (botao = 1) = TRUE: Primeiro;
+					(andar = Terceiro) & (botao = 1) = TRUE: Primeiro;
+					(andar = Quarto) & (botao = 1) = TRUE: Primeiro;
+					(andar = Quinto) & (botao = 1) = TRUE: Primeiro;
+					
+					(andar = Primeiro) & (botao = 2) = TRUE: Segundo;
+					(andar = Segundo) & (botao = 2) = TRUE: Segundo;
+					(andar = Terceiro) & (botao = 2) = TRUE: Segundo;
+					(andar = Quarto) & (botao = 2) = TRUE: Segundo;
+					(andar = Quinto) & (botao = 2) = TRUE: Segundo;
+					
+					(andar = Primeiro) & (botao = 3) = TRUE: Terceiro;
+					(andar = Segundo) & (botao = 3) = TRUE: Terceiro;
+					(andar = Terceiro) & (botao = 3) = TRUE: Terceiro;
+					(andar = Quarto) & (botao = 3) = TRUE: Terceiro;
+					(andar = Quinto) & (botao = 3) = TRUE: Terceiro;
+					
+					(andar = Primeiro) & (botao = 4) = TRUE: Quarto;
+					(andar = Segundo) & (botao = 4) = TRUE: Quarto;
+					(andar = Terceiro) & (botao = 4) = TRUE: Quarto;
+					(andar = Quarto) & (botao = 4) = TRUE: Quarto;
+					(andar = Quinto) & (botao = 4) = TRUE: Quarto;
+					
+					(andar = Primeiro) & (botao = 5) = TRUE: Quinto;
+					(andar = Segundo) & (botao = 5) = TRUE: Quinto;
+					(andar = Terceiro) & (botao = 5) = TRUE: Quinto;
+					(andar = Quarto) & (botao = 5) = TRUE: Quinto;
+					(andar = Quinto) & (botao = 5) = TRUE: Quinto;
+					
+					TRUE: andar;
+				esac;
+				
+	next(porta):= case
+					(andar = Primeiro) & (botao = 1) = TRUE: TRUE;
+					(andar = Segundo) & (botao = 1) = TRUE: FALSE;
+					(andar = Terceiro) & (botao = 1) = TRUE: FALSE;
+					(andar = Quarto) & (botao = 1) = TRUE: FALSE;
+					(andar = Quinto) & (botao = 1) = TRUE: FALSE;
+					
+					(andar = Primeiro) & (botao = 2) = TRUE: FALSE;
+					(andar = Segundo) & (botao = 2) = TRUE: TRUE;
+					(andar = Terceiro) & (botao = 2) = TRUE: FALSE;
+					(andar = Quarto) & (botao = 2) = TRUE: FALSE;
+					(andar = Quinto) & (botao = 2) = TRUE: FALSE;
+					
+					(andar = Primeiro) & (botao = 3) = TRUE: FALSE;
+					(andar = Segundo) & (botao = 3) = TRUE: FALSE;
+					(andar = Terceiro) & (botao = 3) = TRUE: TRUE;
+					(andar = Quarto) & (botao = 3) = TRUE: FALSE;
+					(andar = Quinto) & (botao = 3) = TRUE: FALSE;
+					
+					(andar = Primeiro) & (botao = 4) = TRUE: FALSE;
+					(andar = Segundo) & (botao = 4) = TRUE: FALSE;
+					(andar = Terceiro) & (botao = 4) = TRUE: FALSE;
+					(andar = Quarto) & (botao = 4) = TRUE: TRUE;
+					(andar = Quinto) & (botao = 4) = TRUE: FALSE;
+					
+					(andar = Primeiro) & (botao = 5) = TRUE: FALSE;
+					(andar = Segundo) & (botao = 5) = TRUE: FALSE;
+					(andar = Terceiro) & (botao = 5) = TRUE: FALSE;
+					(andar = Quarto) & (botao = 5) = TRUE: FALSE;
+					(andar = Quinto) & (botao = 5) = TRUE: TRUE;
+					
+					TRUE: porta;
+				esac;
+				

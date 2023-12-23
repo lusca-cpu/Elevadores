@@ -1,0 +1,114 @@
+--Questão 2 da prova 2
+
+MODULE main
+
+VAR
+	
+	andares: 1..3;
+	botoes: {c1, c2, c3}; --Botões internos no elevador
+	porta: boolean; -- TRUE = aberta |  FALSE = fechada;
+	movendo: boolean; -- TRUE = movendo | FALSE = parado;
+	--Botões externos para chamar o elevador
+	bot_prim_andar: boolean; 
+	bot_seg_andar: boolean;
+	bot_ter_andar: boolean;
+	timer: 0..3;
+		
+ASSIGN
+	init(botoes):= c1;
+	init(andares):= 1;
+	init(porta):= TRUE; 
+	init(movendo):= FALSE;
+	
+	next(andares):= case
+						(andares=1) & (botoes=c1) = TRUE: 1;
+						((andares=2) | (andares=3)) & (botoes=c1) & timer = 2 = TRUE: 1;
+						
+						(andares=2) & (botoes=c2) = TRUE: 2;
+						((andares=1) | (andares=3)) & (botoes=c2) & timer = 2 = TRUE: 2;
+
+						(andares=3) & (botoes=c3) = TRUE: 3;
+						((andares=1) | (andares=2)) & (botoes=c3) & timer = 2 = TRUE: 3;
+						
+						((andares=1) | (andares=2) | (andares=3)) & (bot_prim_andar=TRUE) = TRUE: 1;
+						((andares=1) | (andares=2) | (andares=3)) & (bot_seg_andar=TRUE) = TRUE: 2;
+						((andares=1) | (andares=2) | (andares=3)) & (bot_ter_andar=TRUE) = TRUE: 3;
+						
+						TRUE: andares;
+					esac;
+					
+	next(porta):= case
+					(andares = 1) & (botoes = c1) = TRUE: TRUE;
+					(andares = 1) & ((botoes = c2) | (botoes = c3)) = TRUE: FALSE;
+					
+					(andares = 2) & (botoes = c2) = TRUE: TRUE;
+					(andares = 2) & ((botoes = c1) | (botoes = c3)) = TRUE: FALSE;
+					
+					(andares = 3) & (botoes = c3) = TRUE: TRUE;
+					(andares = 3) & ((botoes = c1) | (botoes = c2)) = TRUE: FALSE;
+					
+					TRUE: porta;
+				esac;
+				
+	next(timer):= case
+					(andares = 1) & ((botoes = c2) | (botoes = c3)) = TRUE: (timer + 1) mod 2;
+					andares = 1 & botoes = c1 & timer = 2: 0;
+				
+					(andares = 2) & ((botoes = c1) | (botoes = c3)) = TRUE: (timer + 1) mod 2;
+					andares = 2 & botoes = c2 & timer = 2: 0;
+					
+					(andares = 3) & ((botoes = c1) | (botoes = c2)) = TRUE: (timer + 1) mod 2;
+					andares = 3 & botoes = c3 & timer = 2: 0;
+					
+					TRUE: timer;
+				esac;
+					
+	next(movendo):= case
+					(andares = 1) & (botoes = c1) = TRUE: FALSE;
+					(andares = 1) & ((botoes = c2) | (botoes = c3)) = TRUE: TRUE;
+					
+					(andares = 2) & (botoes = c2) = TRUE: FALSE;
+					(andares = 2) & ((botoes = c1) | (botoes = c3)) = TRUE: TRUE;
+					
+					(andares = 3) & (botoes = c3) = TRUE: FALSE;
+					(andares = 3) & ((botoes = c1) | (botoes = c2)) = TRUE: TRUE;
+
+					TRUE: porta;
+				esac;
+	
+-- 1. Calls to the elevator from floors (i.e., floor button) are eventually serviced.	
+SPEC
+	AG EF (botoes=c1 | botoes=c2 | botoes=c3);
+	
+-- 2. Calls from within the elevator (elev. button) are eventually serviced.
+SPEC
+	AG EF (bot_prim_andar=TRUE | bot_seg_andar=TRUE | bot_ter_andar=TRUE);
+	
+-- 3. The elevator never moves with its doors open.
+SPEC
+	AG !(movendo!=FALSE & porta=TRUE);
+	
+-- 4. The elevator doors remain open until there is a request to use it.
+SPEC
+	AG (porta=TRUE -> EX (bot_prim_andar=TRUE | bot_seg_andar=TRUE | bot_ter_andar=TRUE | botoes=c1 | botoes=c2 | botoes=c3));
+	
+-- 5. It takes exactly 2 time units for the elevator to move between two consecutive floors.
+SPEC
+	
+	
+-- 6. If there are no requests for another floor, the elevator should not move.
+SPEC
+	AG (AG (bot_prim_andar=TRUE | bot_seg_andar=TRUE | bot_ter_andar=TRUE) -> AX (movendo=FALSE));
+	
+-- 7. The elevator cannot change direction between floors.
+SPEC
+	AG AX (movendo=TRUE -> EX (andares = 1 | andares = 2 | andares = 3));
+	
+-- Mais 2 especificações pedidas:
+-- 8. O elevador apenas se move com a porta fechada.
+SPEC
+	AG((movendo=TRUE) -> AF porta = FALSE)
+
+-- 9. Se o botão numerado que não tem for pressionado então o elevador não deve se mover.
+SPEC
+	AG((andares = 4) -> AF movendo = FALSE)

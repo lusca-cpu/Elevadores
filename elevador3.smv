@@ -1,0 +1,88 @@
+--Questão 3 
+
+MODULE main
+
+VAR
+	botao: 1..4;
+	andar: 1..4;
+	porta: boolean; -- TRUE = aberta |  FALSE = fechada;
+	movendo: boolean; -- TRUE = movendo | FALSE = parado;
+	
+ASSIGN
+	init(botao):= 1;
+	init(andar):= 1;
+	init(porta):= TRUE;
+	init(movendo):= FALSE;
+	
+	next(andar):= case
+					(andar = 1) & (botao = 1) = TRUE: 1;
+					((andar = 2) | (andar = 3) | (andar = 4))& (botao = 1) = TRUE: 1;
+										
+					(andar = 2) & (botao = 2) = TRUE: 2;
+					((andar = 1) | (andar = 3) | (andar = 4)) & (botao = 2) = TRUE: 2;
+					
+					(andar = 3) & (botao = 3) = TRUE: 3;
+					((andar = 1) | (andar = 2) | (andar = 4)) & (botao = 3) = TRUE: 3;
+					
+					(andar = 4) & (botao = 4) = TRUE: 4;
+					((andar = 1) | (andar = 2) | (andar = 3)) & (botao = 4) = TRUE: 4;
+					
+					TRUE: andar;
+				esac;
+				
+	next(porta):= case
+					(andar = 1) & (botao = 1) = TRUE: TRUE;
+					(andar = 1) & ((botao = 2) | (botao = 3) | (botao = 4)) = TRUE: FALSE;
+					
+					(andar = 2) & (botao = 2) = TRUE: TRUE;
+					(andar = 2) & ((botao = 1) | (botao = 3) | (botao = 4)) = TRUE: FALSE;
+					
+					(andar = 3) & (botao = 3) = TRUE: TRUE;
+					(andar = 3) & ((botao = 1) | (botao = 2) | (botao = 4)) = TRUE: FALSE;
+
+					(andar = 4) & (botao = 4) = TRUE: TRUE;
+					(andar = 4) & ((botao = 1) | (botao = 2) | (botao = 3)) = TRUE: FALSE;
+					
+					TRUE: porta;
+				esac;
+					
+	next(movendo):= case
+					(andar = 1) & (botao = 1) = TRUE: FALSE;
+					(andar = 1) & ((botao = 2) | (botao = 3) | (botao = 4)) = TRUE: TRUE;
+					
+					(andar = 2) & (botao = 2) = TRUE: FALSE;
+					(andar = 2) & ((botao = 1) | (botao = 3) | (botao = 4)) = TRUE: TRUE;
+					
+					(andar = 3) & (botao = 3) = TRUE: FALSE;
+					(andar = 3) & ((botao = 1) | (botao = 2) | (botao = 4)) = TRUE: TRUE;
+
+					(andar = 4) & (botao = 4) = TRUE: FALSE;
+					(andar = 4) & ((botao = 1) | (botao = 2) | (botao = 3)) = TRUE: TRUE;
+					
+					TRUE: porta;
+				esac;
+				
+--Questão 4
+--a) Especifique a seguinte propriedade em lógica CTL ou LTL: se o botão numerado com o valor zero estiver pressionado então o elevador chegará ao andar zero.
+SPEC
+	AG((botao=1) -> AF andar = 1)
+	
+--b) Especifique a seguinte propriedade em lógica CTL ou LTL: se o botão numerado com o valor dois estiver pressionado então o elevador chegará ao andar dois.
+SPEC
+	AG((botao=2) -> AF andar = 2)
+	
+--c) Especifique a seguinte propriedade em lógica CTL ou LTL: o elevador apenas se move com a porta fechada.
+SPEC
+	AG((movendo=TRUE) -> AF porta = FALSE)
+
+--d) Especifique a seguinte propriedade em lógica CTL ou LTL: se o botão numerado com o valor cinco for pressionado então o elevador não deve se mover.
+SPEC
+	AG((botao=5) -> AF movendo = FALSE)
+
+--e) Especifique a seguinte propriedade em lógica CTL ou LTL: existe andar igual a 5?
+SPEC
+	EF andar = 5
+
+--f) Especifique a seguinte propriedade em lógica CTL ou LTL: se o botão numerado com o valor maior ou igual cinco for pressionado então o elevador não deve se mover.
+SPEC
+	AG((botao>=5) -> AF movendo = FALSE)
